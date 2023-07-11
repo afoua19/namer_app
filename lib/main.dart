@@ -32,6 +32,17 @@ class MyAppState extends ChangeNotifier {
     current = WordPair.random();
     notifyListeners();
   }
+
+  var favorites = <WordPair>[];
+
+  void toggleFavorite() {
+    if (favorites.contains(current)) {
+      favorites.remove(current);
+    } else {
+      favorites.add(current);
+    }
+    notifyListeners();
+  }
 }
 
 class MyHomePage extends StatelessWidget {
@@ -47,15 +58,28 @@ class MyHomePage extends StatelessWidget {
             children: [
               //Text('A random ONA idea:'), // ← Example change.
               BigCard(pair: pair),
+              SizedBox(height: 10),
 
               //ajout de bouton
-              ElevatedButton(
-                onPressed: () {
-                  //permet de générer une paire de mots aléatoires à chaque fois qu'on appuis sur le bouton Next.
-                  appState.getNext(); // ← This instead of print().
-                  print('button pressed!');
-                },
-                child: Text('Next'),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      //permet de générer une paire de mots aléatoires à chaque fois qu'on appuis sur le bouton Next.
+                      appState.getNext(); // ← This instead of print().
+                      print('button pressed!');
+                    },
+                    child: Text('Next'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      appState.toggleFavorite(); // ← T
+                      print('button favorite!');
+                    },
+                    child:Icon(Icons.favorite),
+                  ),
+                ],
               ),
             ],
           ),
