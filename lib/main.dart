@@ -51,6 +51,13 @@ class MyHomePage extends StatelessWidget {
     var appState = context.watch<MyAppState>();
     var pair = appState.current;
 
+    IconData icon;
+    if (appState.favorites.contains(pair)) {
+      icon = Icons.favorite;
+    } else {
+      icon = Icons.favorite_border;
+    }
+
     return Scaffold(
         body: Center(
           child: Column(
@@ -64,6 +71,15 @@ class MyHomePage extends StatelessWidget {
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      appState.toggleFavorite(); // ← T
+                      print('button favorite!');
+                    },
+                    icon: Icon(icon),
+                    label: Text('like'),
+                  ),
+                  SizedBox(height: 10),
                   ElevatedButton(
                     onPressed: () {
                       //permet de générer une paire de mots aléatoires à chaque fois qu'on appuis sur le bouton Next.
@@ -71,13 +87,6 @@ class MyHomePage extends StatelessWidget {
                       print('button pressed!');
                     },
                     child: Text('Next'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      appState.toggleFavorite(); // ← T
-                      print('button favorite!');
-                    },
-                    child:Icon(Icons.favorite),
                   ),
                 ],
               ),
