@@ -43,9 +43,63 @@ class MyAppState extends ChangeNotifier {
     }
     notifyListeners();
   }
+
+  var thumbDown = <WordPair>[];
+  
+  void toogleThumbDown() { 
+  if (thumbDown.contains(current)) {
+   thumbDown.remove(current);
+ } else {
+   thumbDown.add(current);
+ }
+ notifyListeners();
+  }
 }
 
+// ...
+
 class MyHomePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Row(
+        children: [
+          SafeArea(
+            child: NavigationRail(
+              extended: false,
+              destinations: [
+                NavigationRailDestination(
+                  icon: Icon(Icons.home),
+                  label: Text('Home'),
+                ),
+                NavigationRailDestination(
+                  icon: Icon(Icons.favorite),
+                  label: Text('Favorites'),
+                ),
+                NavigationRailDestination(
+                  icon: Icon(Icons.thumb_down),
+                  label: Text('Favorites'),
+                ),
+              ],
+              selectedIndex: 0,
+              onDestinationSelected: (value) {
+                print('selected: $value');
+              },
+            ),
+          ),
+          Expanded(
+            child: Container(
+              color: Theme.of(context).colorScheme.primaryContainer,
+              child: GeneratorPage(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/*class GeneratorPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
@@ -58,48 +112,109 @@ class MyHomePage extends StatelessWidget {
       icon = Icons.favorite_border;
     }
 
-    return Scaffold(
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          BigCard(pair: pair),
+          SizedBox(height: 10),
+          Row(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              //Text('A random ONA idea:'), // ← Example change.
-              BigCard(pair: pair),
-              SizedBox(height: 10),
-
-              //ajout de bouton
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      appState.toggleFavorite(); // ← T
-                      print('button favorite!');
-                    },
-                    icon: Icon(icon),
-                    label: Text('like'),
-                  ),
-                  SizedBox(height: 10),
-                  ElevatedButton(
-                    onPressed: () {
-                      //permet de générer une paire de mots aléatoires à chaque fois qu'on appuis sur le bouton Next.
-                      appState.getNext(); // ← This instead of print().
-                      print('button pressed!');
-                    },
-                    child: Text('Next'),
-                  ),
-                ],
+              ElevatedButton.icon(
+                onPressed: () {
+                  appState.toggleFavorite();
+                },
+                icon: Icon(icon),
+                label: Text('Like'),
+              ),
+              SizedBox(width: 10),
+              ElevatedButton(
+                onPressed: () {
+                  appState.getNext();
+                },
+                child: Text('Next'),
               ),
             ],
           ),
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            // Add your onPressed code here!
-          },
-          backgroundColor: Colors.blue,
-          child: const Icon(Icons.add),
-        ));
+        ],
+      ),
+    );
+  }
+}*/
+
+// ...
+class GeneratorPage extends StatelessWidget {
+  //bool isFavorite = false;
+
+  @override
+  Widget build(BuildContext context) {
+    var appState = context.watch<MyAppState>();
+    var pair = appState.current;
+
+    IconData icon;
+    if (appState.favorites.contains(pair)) {
+      icon = Icons.favorite;
+    } else {
+      icon = Icons.favorite_border;
+    }
+
+    // return Scaffold(
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          //Text('A random ONA idea:'), // ← Example change.
+          BigCard(pair: pair),
+          SizedBox(height: 5),
+
+          //ajout de bouton
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ElevatedButton.icon(
+                  onPressed: () {
+                    appState.toggleFavorite(); // ← T
+                    print('button favorite!');
+                  },
+                  icon: Icon(icon),
+                  // color: isFavorite ? Colors.red : Colors.grey,
+                  label: Text('like'),
+                ),
+                SizedBox(width: 5),
+                ElevatedButton.icon(
+                  onPressed: () {
+                    appState.toogleThumbDown(); // ← This i
+                    print('button dislike!');
+                  },
+                  icon: Icon(Icons.thumb_down),
+                  label: Text('Dislike'),
+                ),
+                SizedBox(width: 5),
+                ElevatedButton(
+                  onPressed: () {
+                    //permet de générer une paire de mots aléatoires à chaque fois qu'on appuis sur le bouton Next.
+                    appState.getNext(); // ← This instead of print().
+                    print('button pressed!');
+                  },
+                  child: Text('Next'),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+    floatingActionButton:
+    FloatingActionButton(
+      onPressed: () {
+        // Add your onPressed code here!
+      },
+      backgroundColor: Colors.blue,
+      child: const Icon(Icons.add),
+    );
   }
 }
 
