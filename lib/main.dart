@@ -45,14 +45,14 @@ class MyAppState extends ChangeNotifier {
   }
 
   var thumbDown = <WordPair>[];
-  
-  void toogleThumbDown() { 
-  if (thumbDown.contains(current)) {
-   thumbDown.remove(current);
- } else {
-   thumbDown.add(current);
- }
- notifyListeners();
+
+  void toogleThumbDown() {
+    if (thumbDown.contains(current)) {
+      thumbDown.remove(current);
+    } else {
+      thumbDown.add(current);
+    }
+    notifyListeners();
   }
 }
 
@@ -159,6 +159,13 @@ class GeneratorPage extends StatelessWidget {
       icon = Icons.favorite_border;
     }
 
+    IconData iconData;
+    if (appState.thumbDown.contains(pair)) {
+      iconData = Icons.thumb_down;
+    } else {
+      iconData = Icons.thumb_down_alt_outlined;
+    }
+
     // return Scaffold(
     return Center(
       child: Column(
@@ -169,6 +176,7 @@ class GeneratorPage extends StatelessWidget {
           SizedBox(height: 5),
 
           //ajout de bouton
+          //SingleChildScrollView permet de résoudre le problème du débordement
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(
@@ -189,7 +197,7 @@ class GeneratorPage extends StatelessWidget {
                     appState.toogleThumbDown(); // ← This i
                     print('button dislike!');
                   },
-                  icon: Icon(Icons.thumb_down),
+                  icon: Icon(iconData),
                   label: Text('Dislike'),
                 ),
                 SizedBox(width: 5),
